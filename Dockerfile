@@ -1,1 +1,1 @@
-FROM pangeo/pangeo-notebook:2019.12.04
+FROM jupyter/base-notebook:lab-1.2.5
