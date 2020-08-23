@@ -1,7 +1,7 @@
 FROM pangeo/base-notebook:2019.12.04
 Run conda install --yes 'git'
 RUN git clone -b python3 https://github.com/y-lei99/geonotebook.git
-RUN cd python3
+RUN cd geonotebook
 RUN conda install --quiet --yes \
                        'curl' \
                        'pyproj' \
