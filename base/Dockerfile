@@ -30,7 +30,7 @@ RUN echo "Creating ${NB_USER} user..." \
 # https://github.com/moby/moby/issues/35018
 #COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
 COPY  . /srv
-RUN chmod -R jovyan:jovyan /srv
+RUN chmod jovyan /srv
 
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
