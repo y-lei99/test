@@ -29,7 +29,8 @@ RUN echo "Creating ${NB_USER} user..." \
 # but env sub only works for docker>19.03 (kubernetes>1.17)
 # https://github.com/moby/moby/issues/35018
 #COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
-COPY --chown=jovyan:jovyan . /srv
+COPY  . /srv
+RUN chmod -R jovyan:jovyan /srv
 
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
