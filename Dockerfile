@@ -71,7 +71,7 @@ RUN echo "Copying configuration files..." \
 # Install Tini
 RUN conda install --quiet --yes 'tini=0.18.0' && \
     conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
-    conda clean -afy && \
+    #conda clean -afy && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
     
@@ -85,7 +85,7 @@ RUN conda install --quiet --yes \
     'notebook' \
     'jupyterhub' \
     'jupyterlab' && \
-    conda clean -afy && \
+    #conda clean -afy && \
     npm cache clean --force && \
     jupyter notebook --generate-config && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
