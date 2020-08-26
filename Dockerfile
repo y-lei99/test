@@ -4,19 +4,33 @@ FROM ubuntu:18.04
 # Run this section as root
 # try to keep conda version in sync with repo2docker
 # ========================
+USER root
+
 ENV CONDA_VERSION=4.8.3-4 \
     CONDA_ENV=notebook \
     NB_USER=jovyan \
     NB_UID=1000 \
+    NB_GID=100 \
     SHELL=/bin/bash \
     LANG=C.UTF-8  \
     LC_ALL=C.UTF-8 \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
     CONDA_DIR=/srv/conda
 
 ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
     DASK_ROOT_CONFIG=${CONDA_DIR}/etc \
     HOME=/home/${NB_USER} \
     PATH=${CONDA_DIR}/bin:${PATH}
+    
+# Copy a script that we will use to correct permissions after running certain commands
+COPY fix-permissions /usr/local/bin/fix-permissions
+RUN chmod a+rx /usr/local/bin/fix-permissions
+
+# Enable prompt color in the skeleton .bashrc before creating the default NB_USER
+RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc
+
 
 # Create jovyan user, permissions, add conda init to startup script
 RUN echo "Creating ${NB_USER} user..." \
@@ -48,11 +62,14 @@ RUN apt-get update \
     fonts-liberation \
     run-one \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
+ 
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
 # ========================
 #RUN fix-permissions /home/$NB_USER
 
 
-USER $NB_UID
+USER ${NB_USER}
 WORKDIR ${HOME}
 
 RUN echo "Installing Miniforge..." \
@@ -60,9 +77,23 @@ RUN echo "Installing Miniforge..." \
     && wget --quiet ${URL} -O miniconda.sh \
     && /bin/bash miniconda.sh -u -b -p ${CONDA_DIR} \
     && rm miniconda.sh \
+    && echo "conda ${CONDA_VERSION}" >> $CONDA_DIR/conda-meta/pinned \
+    && conda config --system --prepend channels conda-forge \
+    && conda config --system --set auto_update_conda false \
+    && conda config --system --set show_channel_urls true \
+    && conda config --system --set channel_priority strict \
     && conda clean -afy \
-    && find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
-    && find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
+    if [ ! $PYTHON_VERSION = 'default' ]; then conda install --yes python=$PYTHON_VERSION; fi && \
+    conda list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
+    conda install --quiet --yes conda && \
+    conda install --quiet --yes pip && \
+    conda update --all --quiet --yes && \
+    conda clean --all -f -y && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+    #&& find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
+    #&& find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
 
 RUN echo "Copying configuration files..." \
     && mv /srv/condarc.yml ${CONDA_DIR}/.condarc \
@@ -71,7 +102,7 @@ RUN echo "Copying configuration files..." \
 # Install Tini
 RUN conda install --quiet --yes 'tini=0.18.0' && \
     conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
-    #conda clean -afy && \
+    conda clean -all -f -y && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
     
@@ -108,7 +139,7 @@ USER root
 RUN fix-permissions /etc/jupyter/
 
 # Switch back to jovyan to avoid accidental container runs as root
-USER $NB_UID
+USER ${NB_USER}
 
 WORKDIR $HOME
 #ENTRYPOINT ["/srv/start"]
