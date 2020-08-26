@@ -72,6 +72,7 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
 
 USER ${NB_USER}
 WORKDIR ${HOME}
+ARG PYTHON_VERSION=default
 
 RUN echo "Installing Miniforge..." \
     && URL="https://github.com/conda-forge/miniforge/releases/download/${CONDA_VERSION}/Miniforge3-${CONDA_VERSION}-Linux-x86_64.sh" \
