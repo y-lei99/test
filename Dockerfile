@@ -85,7 +85,7 @@ RUN echo "Installing Miniforge..." \
     && conda config --system --set show_channel_urls true \
     && conda config --system --set channel_priority strict \
     && conda clean -afy \
-    if [ ! $PYTHON_VERSION = 'default' ]; then conda install --yes python=$PYTHON_VERSION; fi && \
+    && if [ ! $PYTHON_VERSION = 'default' ]; then conda install --yes python=$PYTHON_VERSION; fi && \
     conda list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
     conda install --quiet --yes conda && \
     conda install --quiet --yes pip && \
