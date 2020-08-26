@@ -44,7 +44,8 @@ RUN echo "Creating ${NB_USER} user..." \
 # https://github.com/moby/moby/issues/35018
 #COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
 #USER ${NB_USER}
-#COPY . /srv
+COPY . /srv
+RUN chown -R jovyan:jovyan /srv
 
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
@@ -85,23 +86,19 @@ RUN echo "Installing Miniforge..." \
     && conda config --system --set show_channel_urls true \
     && conda config --system --set channel_priority strict \
     && conda clean -afy \
-    && if [ ! $PYTHON_VERSION = 'default' ]; then conda install --yes python=$PYTHON_VERSION; fi && \
-    conda list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
-    conda install --quiet --yes conda && \
-    conda install --quiet --yes pip && \
-    conda update --all --quiet --yes && \
-    conda clean --all -f -y && \
-    rm -rf /home/$NB_USER/.cache/yarn && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions /home/$NB_USER
+    && find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
+    && find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
+    #rm -rf /home/$NB_USER/.cache/yarn && \
+    #fix-permissions $CONDA_DIR && \
+    #fix-permissions /home/$NB_USER
     #&& find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
     #&& find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
 
 #RUN echo "Copying configuration files..." \
 #    && mv /srv/condarc.yml ${CONDA_DIR}/.condarc \
 #    && mv /srv/dask_config.yml ${CONDA_DIR}/etc/dask.yml
-COPY condarc.yml ${CONDA_DIR}/.condarc  
-COPY dask_config.yml ${CONDA_DIR}/etc/dask.yml
+#COPY condarc.yml ${CONDA_DIR}/.condarc  
+#COPY dask_config.yml ${CONDA_DIR}/etc/dask.yml
 # Install Tini
 RUN conda install --quiet --yes 'tini=0.18.0' && \
     conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
