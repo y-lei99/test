@@ -23,7 +23,25 @@ ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
     DASK_ROOT_CONFIG=${CONDA_DIR}/etc \
     HOME=/home/${NB_USER} \
     PATH=${CONDA_DIR}/bin:${PATH}
-    
+
+
+USER root
+ARG DEBIAN_FRONTEND=noninteractive
+#COPY fix-permissions /usr/local/bin/fix-permissions
+#RUN chmod a+rx /usr/local/bin/fix-permissions
+RUN apt-get update \
+ && apt-get install -yq --no-install-recommends \
+    wget \
+    bzip2 \
+    ca-certificates \
+    sudo \
+    locales \
+    fonts-liberation \
+    run-one \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
+ 
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen    
 # Copy a script that we will use to correct permissions after running certain commands
 COPY fix-permissions /usr/local/bin/fix-permissions
 RUN chmod a+rx /usr/local/bin/fix-permissions
@@ -49,24 +67,7 @@ RUN chown -R jovyan:jovyan /srv
 
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
-ARG DEBIAN_FRONTEND=noninteractive
 
-USER root
-#COPY fix-permissions /usr/local/bin/fix-permissions
-#RUN chmod a+rx /usr/local/bin/fix-permissions
-RUN apt-get update \
- && apt-get install -yq --no-install-recommends \
-    wget \
-    bzip2 \
-    ca-certificates \
-    sudo \
-    locales \
-    fonts-liberation \
-    run-one \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
- 
-RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
-    locale-gen
 # ========================
 #RUN fix-permissions /home/$NB_USER
 
