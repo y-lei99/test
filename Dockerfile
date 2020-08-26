@@ -4,7 +4,7 @@ FROM ubuntu:18.04
 # Run this section as root
 # try to keep conda version in sync with repo2docker
 # ========================
-USER root
+#USER root
 
 ENV CONDA_VERSION=4.8.3-4 \
     CONDA_ENV=notebook \
@@ -43,16 +43,16 @@ RUN echo "Creating ${NB_USER} user..." \
 # but env sub only works for docker>19.03 (kubernetes>1.17)
 # https://github.com/moby/moby/issues/35018
 #COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
-USER ${NB_USER}
-COPY . /srv
+#USER ${NB_USER}
+#COPY . /srv
 
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
 ARG DEBIAN_FRONTEND=noninteractive
 
 USER root
-COPY fix-permissions /usr/local/bin/fix-permissions
-RUN chmod a+rx /usr/local/bin/fix-permissions
+#COPY fix-permissions /usr/local/bin/fix-permissions
+#RUN chmod a+rx /usr/local/bin/fix-permissions
 RUN apt-get update \
  && apt-get install -yq --no-install-recommends \
     wget \
@@ -97,10 +97,11 @@ RUN echo "Installing Miniforge..." \
     #&& find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
     #&& find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
 
-RUN echo "Copying configuration files..." \
-    && mv /srv/condarc.yml ${CONDA_DIR}/.condarc \
-    && mv /srv/dask_config.yml ${CONDA_DIR}/etc/dask.yml
-    
+#RUN echo "Copying configuration files..." \
+#    && mv /srv/condarc.yml ${CONDA_DIR}/.condarc \
+#    && mv /srv/dask_config.yml ${CONDA_DIR}/etc/dask.yml
+COPY condarc.yml ${CONDA_DIR}/.condarc  
+COPY dask_config.yml ${CONDA_DIR}/etc/dask.yml
 # Install Tini
 RUN conda install --quiet --yes 'tini=0.18.0' && \
     conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
