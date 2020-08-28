@@ -29,8 +29,9 @@ RUN echo "Creating ${NB_USER} user..." \
 # but env sub only works for docker>19.03 (kubernetes>1.17)
 # https://github.com/moby/moby/issues/35018
 #COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
-COPY --chown=jovyan:jovyan . /srv
-
+#COPY --chown=jovyan:jovyan . /srv
+COPY . /home/jovyan/
+RUN chown -R jovyan:jovyan /home/jovyan/
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
 ARG DEBIAN_FRONTEND=noninteractive
@@ -56,8 +57,8 @@ RUN echo "Installing Miniforge..." \
     && find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
 
 RUN echo "Copying configuration files..." \
-    && mv /srv/condarc.yml ${CONDA_DIR}/.condarc \
-    && mv /srv/dask_config.yml ${CONDA_DIR}/etc/dask.yml
+    && mv /home/jovyan/condarc.yml ${CONDA_DIR}/.condarc \
+    && mv /home/jovyan/dask_config.yml ${CONDA_DIR}/etc/dask.yml
 
 EXPOSE 8888
 ENTRYPOINT ["/srv/start"]
@@ -67,7 +68,8 @@ ENTRYPOINT ["/srv/start"]
 # ----------------------
 ONBUILD USER root
 # hardcode for now
-ONBUILD COPY --chown=jovyan:jovyan . /home/jovyan
+ONBUILD COPY . /home/jovyan
+ONBUILD RUN chown -R jovyan:jovyan /home/jovyan
 
 ONBUILD RUN echo "Checking for 'binder' or '.binder' subfolder" \
         ; if [ -d binder ] ; then \
