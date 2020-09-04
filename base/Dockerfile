@@ -58,10 +58,10 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
     fix-permissions $HOME && \
     fix-permissions $CONDA_DIR
 # Create jovyan user, permissions, add conda init to startup script
-RUN echo "Creating ${NB_USER} user..." \
-    && groupadd --gid ${NB_UID} ${NB_USER}  \
-    && useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
-    && echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh \
+#RUN echo "Creating ${NB_USER} user..." \
+    #&& groupadd --gid ${NB_UID} ${NB_USER}  \
+    #&& useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
+RUN echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh \
     && chown -R ${NB_USER}:${NB_USER} /srv
 
 
