@@ -50,19 +50,21 @@ RUN chmod a+rx /usr/local/bin/fix-permissions
 RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc
 RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
     sed -i.bak -e 's/^%admin/#%admin/' /etc/sudoers && \
-    sed -i.bak -e 's/^%sudo/#%sudo/' /etc/sudoers
-    #useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
-    #mkdir -p $CONDA_DIR && \
-    #chown $NB_USER:$NB_GID $CONDA_DIR && \
-    #@chmod g+w /etc/passwd && \
-    #fix-permissions $HOME && \
-    #fix-permissions $CONDA_DIR
+    sed -i.bak -e 's/^%sudo/#%sudo/' /etc/sudoers && \
+    useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown $NB_USER:$NB_GID $CONDA_DIR && \
+    chmod g+w /etc/passwd && \ 
+    fix-permissions $HOME && \
+    fix-permissions $CONDA_DIR
 # Create jovyan user, permissions, add conda init to startup script
 RUN echo "Creating ${NB_USER} user..." \
-    && groupadd --gid ${NB_UID} ${NB_USER}  \
-    && useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
+    #&& groupadd --gid ${NB_UID} ${NB_USER}  \
+    #&& useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
     && echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh \
-    && chown -R ${NB_USER}:${NB_USER} /srv
+    && chown -R ${NB_USER}:${NB_GID} /srv
+    #fix-permissions $HOME && \
+    #fix-permissions $CONDA_DIR
 
 
 # ========================
@@ -72,7 +74,7 @@ RUN echo "Creating ${NB_USER} user..." \
 # https://github.com/moby/moby/issues/35018
 #COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
 COPY  . /srv
-RUN chown -R ${NB_USER}:${NB_USER} /srv
+RUN chown -R ${NB_USER}:${NB_GID} /srv
 
 # SEE: https://github.com/phusion/baseimage-docker/issues/58
 # and https://github.com/phusion/baseimage-docker/issues/319
@@ -82,7 +84,7 @@ RUN chown -R ${NB_USER}:${NB_USER} /srv
 
 
 
-USER $NB_UID
+USER $NB_USER
 WORKDIR ${HOME}
 
 RUN echo "Installing Miniforge..." \
@@ -100,8 +102,8 @@ RUN echo "Copying configuration files..." \
     
 # Install Tini
 RUN conda install --quiet --yes 'tini=0.18.0' && \
-    #conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
-    #conda clean -afy && \
+    conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
+    conda clean -afy && \
     fix-permissions $CONDA_DIR && \
     fix-permissions /home/$NB_USER
     
@@ -138,7 +140,7 @@ USER root
 RUN fix-permissions /etc/jupyter/
 
 # Switch back to jovyan to avoid accidental container runs as root
-USER $NB_UID
+USER $NB_USER
 
 WORKDIR $HOME
 #ENTRYPOINT ["/srv/start"]
