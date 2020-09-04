@@ -126,7 +126,7 @@ RUN echo "Checking for 'postBuild'..." \
         && ./postBuild \
         && rm -rf /tmp/* \
         && rm -rf ${HOME}/.cache ${HOME}/.npm ${HOME}/.yarn \
-        && rm -rf ${CONDA_DIR}/share/jupyter/lab/staging
+        && rm -rf ${CONDA_DIR}/share/jupyter/lab/staging \
         #&& find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
         #&& find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete \
         #&& find ${CONDA_DIR} -follow -type f -name '*.js.map' -delete \
