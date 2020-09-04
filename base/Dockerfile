@@ -12,7 +12,7 @@ USER root
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
- && apt-get install -yq --no-install-recommends \
+    && apt-get install -yq --no-install-recommends \
     wget \
     bzip2 \
     ca-certificates \
@@ -20,7 +20,7 @@ RUN apt-get update \
     locales \
     fonts-liberation \
     run-one \
- && apt-get clean && rm -rf /var/lib/apt/lists/* 
+    && apt-get clean && rm -rf /var/lib/apt/lists/* 
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 ENV CONDA_DIR=/srv/conda \
@@ -30,7 +30,7 @@ ENV CONDA_DIR=/srv/conda \
     NB_GID=$NB_GID \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8
+    LANGUAGE=en_US.UTF-8 \
     CONDA_VERSION=4.8.3-4 \
     CONDA_ENV=notebook 
     #NB_USER=jovyan \
