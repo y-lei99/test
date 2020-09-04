@@ -18,27 +18,27 @@ ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
     HOME=/home/${NB_USER} \
     PATH=${CONDA_DIR}/bin:${PATH}
 
+USER root
+COPY fix-permissions /usr/local/bin/fix-permissions
+RUN chmod a+rx /usr/local/bin/fix-permissions
+# Enable prompt color in the skeleton .bashrc before creating the default NB_USER
+RUN sed -i 's/^#force_color_prompt=yes/force_color_prompt=yes/' /etc/skel/.bashrc
 # Create jovyan user, permissions, add conda init to startup script
 RUN echo "Creating ${NB_USER} user..." \
     && groupadd --gid ${NB_UID} ${NB_USER}  \
     && useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
     && echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh \
     && chown -R ${NB_USER}:${NB_USER} /srv
-
-# COPY chown available docker>17.09
-# but env sub only works for docker>19.03 (kubernetes>1.17)
-# https://github.com/moby/moby/issues/35018
-#COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
-COPY  . /srv
-RUN chown -R ${NB_USER}:${NB_USER} /srv
-
-# SEE: https://github.com/phusion/baseimage-docker/issues/58
-# and https://github.com/phusion/baseimage-docker/issues/319
+RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
+    sed -i.bak -e 's/^%admin/#%admin/' /etc/sudoers && \
+    sed -i.bak -e 's/^%sudo/#%sudo/' /etc/sudoers && \
+    useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
+    mkdir -p $CONDA_DIR && \
+    chown $NB_USER:$NB_GID $CONDA_DIR && \
+    chmod g+w /etc/passwd && \
+    fix-permissions $HOME && \
+    fix-permissions $CONDA_DIR
 ARG DEBIAN_FRONTEND=noninteractive
-
-USER root
-COPY fix-permissions /usr/local/bin/fix-permissions
-RUN chmod a+rx /usr/local/bin/fix-permissions
 RUN apt-get update \
  && apt-get install -yq --no-install-recommends \
     wget \
@@ -51,6 +51,19 @@ RUN apt-get update \
  && apt-get clean && rm -rf /var/lib/apt/lists/*
 # ========================
 #RUN fix-permissions /home/$NB_USER
+# COPY chown available docker>17.09
+# but env sub only works for docker>19.03 (kubernetes>1.17)
+# https://github.com/moby/moby/issues/35018
+#COPY --chown=${NB_USER}:${NB_USER} . ${HOME}
+COPY  . /srv
+RUN chown -R ${NB_USER}:${NB_USER} /srv
+
+# SEE: https://github.com/phusion/baseimage-docker/issues/58
+# and https://github.com/phusion/baseimage-docker/issues/319
+
+
+
+
 
 
 USER $NB_UID
