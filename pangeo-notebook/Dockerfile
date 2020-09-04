@@ -1,9 +1,9 @@
-FROM registry.cn-beijing.aliyuncs.com/k8s_test/test:base-image-test1
+FROM registry.cn-beijing.aliyuncs.com/k8s_test/test:base-v3
 # ----------------------
 USER root
 # hardcode for now
 COPY . /home/jovyan
-RUN chown -R jovyan:jovyan /home/jovyan
+RUN chown -R ${NB_USER}:${NB_GID} /home/jovyan
 
 #RUN echo "Checking for 'binder' or '.binder' subfolder" \
 #        ; if [ -d binder ] ; then \
