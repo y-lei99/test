@@ -92,7 +92,7 @@ RUN mkdir /home/$NB_USER/work && \
     fix-permissions /home/$NB_USER
     
 ENV MINICONDA_VERSION=4.8.3 \
-    MINICONDA_MD5=d63adf39f2c220950a063e0529d4ff74 \
+    MINICONDA_MD5=751786b92c00b1aeae3f017b781018df \
     CONDA_VERSION=4.8.3
 RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-py37_${MINICONDA_VERSION}-Linux-x86_64.sh && \
     echo "${MINICONDA_MD5} *Miniconda3-py37_${MINICONDA_VERSION}-Linux-x86_64.sh" | md5sum -c - && \
