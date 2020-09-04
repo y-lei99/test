@@ -1,4 +1,4 @@
-FROM ubuntu:focal-20200703@sha256:d5a6519d9f048100123c568eb83f7ef5bfcad69b01424f420f17c932b00dea76
+FROM ubuntu:18.04
 # Master build file for pangeo images
 
 # Run this section as root
@@ -31,16 +31,16 @@ ENV CONDA_DIR=/srv/conda \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8 \
-    CONDA_VERSION=4.8.3-4 \
-    CONDA_ENV=notebook 
+    CONDA_VERSION=4.8.3-4
+    #CONDA_ENV=notebook 
     #NB_USER=jovyan \
     #NB_UID=1000 \
     #SHELL=/bin/bash \
     #LANG=C.UTF-8  \
     #LC_ALL=C.UTF-8 \
     
-ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
-    DASK_ROOT_CONFIG=${CONDA_DIR}/etc \
+#NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
+ENV DASK_ROOT_CONFIG=${CONDA_DIR}/etc \
     HOME=/home/${NB_USER} \
     PATH=${CONDA_DIR}/bin:${PATH}
 
@@ -61,11 +61,11 @@ RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
 RUN echo "Creating ${NB_USER} user..." \
     #&& groupadd --gid ${NB_UID} ${NB_USER}  \
     #&& useradd --create-home --gid ${NB_UID} --no-log-init --uid ${NB_UID} ${NB_USER} \
-    && echo ". ${CONDA_DIR}/etc/profile.d/conda.sh ; conda activate ${CONDA_ENV}" > /etc/profile.d/init_conda.sh \
+    && echo ". ${CONDA_DIR}/etc/profile.d/conda.sh " > /etc/profile.d/init_conda.sh \
     && chown -R ${NB_USER}:${NB_GID} /srv
     #fix-permissions $HOME && \
     #fix-permissions $CONDA_DIR
-
+#; conda activate ${CONDA_ENV}
 
 # ========================
 #RUN fix-permissions /home/$NB_USER
