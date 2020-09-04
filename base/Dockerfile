@@ -30,8 +30,8 @@ ENV CONDA_DIR=/srv/conda \
     NB_GID=$NB_GID \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
-    LANGUAGE=en_US.UTF-8 \
-    CONDA_VERSION=4.8.3-4
+    LANGUAGE=en_US.UTF-8
+    #CONDA_VERSION=4.8.3-4
     #CONDA_ENV=notebook 
     #NB_USER=jovyan \
     #NB_UID=1000 \
@@ -86,15 +86,40 @@ RUN chown -R ${NB_USER}:${NB_GID} /srv
 
 USER $NB_USER
 WORKDIR ${HOME}
-
-RUN echo "Installing Miniforge..." \
-    && URL="https://github.com/conda-forge/miniforge/releases/download/${CONDA_VERSION}/Miniforge3-${CONDA_VERSION}-Linux-x86_64.sh" \
-    && wget --quiet ${URL} -O miniconda.sh \
-    && /bin/bash miniconda.sh -u -b -p ${CONDA_DIR} \
-    && rm miniconda.sh \
-    && conda clean -afy \
-    && find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
-    && find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
+ARG PYTHON_VERSION=default
+# Setup work directory for backward-compatibility
+RUN mkdir /home/$NB_USER/work && \
+    fix-permissions /home/$NB_USER
+    
+ENV MINICONDA_VERSION=4.8.3 \
+    MINICONDA_MD5=d63adf39f2c220950a063e0529d4ff74 \
+    CONDA_VERSION=4.8.3
+RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-py38_${MINICONDA_VERSION}-Linux-x86_64.sh && \
+    echo "${MINICONDA_MD5} *Miniconda3-py38_${MINICONDA_VERSION}-Linux-x86_64.sh" | md5sum -c - && \
+    /bin/bash Miniconda3-py38_${MINICONDA_VERSION}-Linux-x86_64.sh -u -b -p $CONDA_DIR && \
+    rm Miniconda3-py38_${MINICONDA_VERSION}-Linux-x86_64.sh && \
+    echo "conda ${CONDA_VERSION}" >> $CONDA_DIR/conda-meta/pinned && \
+    conda config --system --prepend channels conda-forge && \
+    conda config --system --set auto_update_conda false && \
+    conda config --system --set show_channel_urls true && \
+    conda config --system --set channel_priority strict && \
+    if [ ! $PYTHON_VERSION = 'default' ]; then conda install --yes python=$PYTHON_VERSION; fi && \
+    conda list python | grep '^python ' | tr -s ' ' | cut -d '.' -f 1,2 | sed 's/$/.*/' >> $CONDA_DIR/conda-meta/pinned && \
+    conda install --quiet --yes conda && \
+    conda install --quiet --yes pip && \
+    conda update --all --quiet --yes && \
+    conda clean --all -f -y && \
+    rm -rf /home/$NB_USER/.cache/yarn && \
+    fix-permissions $CONDA_DIR && \
+    fix-permissions /home/$NB_USER
+#RUN echo "Installing Miniforge..." \
+#    && URL="https://github.com/conda-forge/miniforge/releases/download/${CONDA_VERSION}/Miniforge3-${CONDA_VERSION}-Linux-x86_64.sh" \
+#    && wget --quiet ${URL} -O miniconda.sh \
+#    && /bin/bash miniconda.sh -u -b -p ${CONDA_DIR} \
+#    && rm miniconda.sh \
+#    && conda clean -afy \
+#    && find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
+#    && find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete
 
 RUN echo "Copying configuration files..." \
     && mv /srv/condarc.yml ${CONDA_DIR}/.condarc \
