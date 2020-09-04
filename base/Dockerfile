@@ -4,21 +4,12 @@ FROM ubuntu:focal-20200703@sha256:d5a6519d9f048100123c568eb83f7ef5bfcad69b01424f
 # Run this section as root
 # try to keep conda version in sync with repo2docker
 # ========================
-ENV CONDA_VERSION=4.8.3-4 \
-    CONDA_ENV=notebook \
-    NB_USER=jovyan \
-    NB_UID=1000 \
-    SHELL=/bin/bash \
-    LANG=C.UTF-8  \
-    LC_ALL=C.UTF-8 \
-    CONDA_DIR=/srv/conda
-
-ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
-    DASK_ROOT_CONFIG=${CONDA_DIR}/etc \
-    HOME=/home/${NB_USER} \
-    PATH=${CONDA_DIR}/bin:${PATH}
+ARG NB_USER="jovyan"
+ARG NB_UID="1000"
+ARG NB_GID="100"
 
 USER root
+
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
  && apt-get install -yq --no-install-recommends \
@@ -29,7 +20,30 @@ RUN apt-get update \
     locales \
     fonts-liberation \
     run-one \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
+ && apt-get clean && rm -rf /var/lib/apt/lists/* 
+RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
+    locale-gen
+ENV CONDA_DIR=/srv/conda \
+    SHELL=/bin/bash \
+    NB_USER=$NB_USER \
+    NB_UID=$NB_UID \
+    NB_GID=$NB_GID \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8
+    CONDA_VERSION=4.8.3-4 \
+    CONDA_ENV=notebook 
+    #NB_USER=jovyan \
+    #NB_UID=1000 \
+    #SHELL=/bin/bash \
+    #LANG=C.UTF-8  \
+    #LC_ALL=C.UTF-8 \
+    
+ENV NB_PYTHON_PREFIX=${CONDA_DIR}/envs/${CONDA_ENV} \
+    DASK_ROOT_CONFIG=${CONDA_DIR}/etc \
+    HOME=/home/${NB_USER} \
+    PATH=${CONDA_DIR}/bin:${PATH}
+
 COPY fix-permissions /usr/local/bin/fix-permissions
 RUN chmod a+rx /usr/local/bin/fix-permissions
 # Enable prompt color in the skeleton .bashrc before creating the default NB_USER
