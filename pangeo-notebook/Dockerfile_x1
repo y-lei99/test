@@ -1,4 +1,4 @@
-FROM registry.cn-beijing.aliyuncs.com/k8s_test/test:base-v3
+FROM registry.cn-beijing.aliyuncs.com/k8s_test/test:base-v4
 # ----------------------
 USER root
 # hardcode for now
