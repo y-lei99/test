@@ -22,8 +22,9 @@ RUN wget https://download.oracle.com/otn/linux/instantclient/11204/instantclient
 #RUN dpkg -i oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.deb
 RUN mkdir -p /opt/instantclient/instantclient_11_2
 RUN jar xvf instantclient-basic-linux.x64-11.2.0.4.0.zip
-RUN mv . /opt/instantclient/instantclient_11_2
 RUN rm -f /tmp/instantclient*.zip
+RUN mv * /opt/instantclient/instantclient_11_2
+
 RUN mkdir -p /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
 ADD tnsnames.ora /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
 ENV ORACLE_HOME=/opt/instantclient/instantclient_11_2 \
