@@ -1,7 +1,7 @@
 FROM registry.cn-beijing.aliyuncs.com/k8s_test/geonotebook:geopangeo-v1
 #apt-get install rpm alien
 USER root
-RUN apt-get install -y libaio-dev 
+RUN apt-get install -y libaio1
 RUN apt-get install -y unzip
 
 WORKDIR /tmp
