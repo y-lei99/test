@@ -5,13 +5,10 @@ USER root
 RUN apt-get update
 RUN apt-get install -y libaio1
 RUN apt-get install unzip
-RUN apt-get install -y vsftpd
-RUN apt-get install -y ftp
+#RUN apt-get install -y vsftpd
+#RUN apt-get install -y ftp
 WORKDIR /tmp
-RUN ftp 139.196.50.15 && \
-    cd pub/ && \
-    get instantclient.tar && \
-    exit
+RUN curl ftp://139.196.50.15:21/pub/instantclient.tar 
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
