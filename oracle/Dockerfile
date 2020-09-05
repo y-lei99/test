@@ -1,18 +1,20 @@
 FROM registry.cn-beijing.aliyuncs.com/k8s_test/geonotebook:geopangeo-v1
-#apt-get install rpm alien
 USER root
+RUN apt-get install rpm alien
+
 RUN apt-get update
 RUN apt-get install -y libaio1
 RUN apt-get install -y p7zip-full
 
 WORKDIR /tmp
-RUN wget -O instantclient.zip https://download.oracle.com/otn/linux/instantclient/11204/instantclient-basic-linux.x64-11.2.0.4.0.zip
+#RUN wget -O instantclient.zip https://download.oracle.com/otn/linux/instantclient/11204/instantclient-basic-linux.x64-11.2.0.4.0.zip
+RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
-#RUN alien oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
+RUN alien oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
 #RUN alien oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
 #RUN alien oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
-#RUN dpkg -i oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.deb
+RUN dpkg -i oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.deb
 RUN 7za x instantclient.zip && \
