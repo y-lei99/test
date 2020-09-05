@@ -5,7 +5,8 @@ USER root
 RUN apt-get update
 RUN apt-get install -y libaio1
 RUN apt-get install unzip
-RUN apt-get install -y vsftpd 
+RUN apt-get install -y vsftpd
+RUN apt-get install -y ftp
 WORKDIR /tmp
 RUN ftp 139.196.50.15 && \
     cd pub/ && \
