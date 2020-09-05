@@ -5,10 +5,11 @@ USER root
 RUN apt-get update
 RUN apt-get install -y libaio1
 RUN apt-get install unzip
+RUN apt-get install fastjar
 #RUN apt-get install -y vsftpd
 #RUN apt-get install -y ftp
 WORKDIR /tmp
-RUN wget ftp://test:test@139.196.50.15/instantclient.tar
+RUN wget https://download.oracle.com/otn/linux/instantclient/11204/instantclient-basic-linux.x64-11.2.0.4.0.zip
 #RUN curl ftp://139.196.50.15/instantclient.tar -u test:test 
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
@@ -19,9 +20,9 @@ RUN wget ftp://test:test@139.196.50.15/instantclient.tar
 #RUN dpkg -i oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.deb
-RUN tar -zxf instantclient.tar && \
+RUN jar xvf instantclient-basic-linux.x64-11.2.0.4.0.zip && \
     mv /tmp/instantclient_11_2 /opt/instantclient
-RUN rm -f /tmp/instantclient.tar
+RUN rm -f /tmp/instantclient*.zip
 RUN mkdir -p /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
 ADD tnsnames.ora /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
 ENV ORACLE_HOME=/opt/instantclient/instantclient_11_2 \
