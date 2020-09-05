@@ -3,10 +3,10 @@ FROM registry.cn-beijing.aliyuncs.com/k8s_test/geonotebook:geopangeo-v1
 USER root
 RUN apt-get update
 RUN apt-get install -y libaio1
-RUN apt-get install -f jar
+RUN apt-get install -y unzip
 
 WORKDIR /tmp
-RUN wget -O instantclient-basic.zip https://download.oracle.com/otn/linux/instantclient/11204/instantclient-basic-linux.x64-11.2.0.4.0.zip
+RUN curl -L https://download.oracle.com/otn/linux/instantclient/11204/instantclient-basic-linux.x64-11.2.0.4.0.zip?raw=true > instantclient-basic.zip
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
 #RUN alien oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
@@ -15,7 +15,7 @@ RUN wget -O instantclient-basic.zip https://download.oracle.com/otn/linux/instan
 #RUN dpkg -i oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.deb
-RUN jar xvf instantclient-basic.zip && \
+RUN unzip instantclient-basic.zip && \
     mv /tmp/instantclient_11_2 /opt/instantclient
 RUN rm -f /tmp/instantclient*.zip
 RUN mkdir -p /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
