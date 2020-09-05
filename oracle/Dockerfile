@@ -7,7 +7,7 @@ RUN apt-get install -y libaio1
 #RUN apt-get install -y p7zip-full
 
 WORKDIR /tmp
-RUN wget https://pan.baidu.com/s/1SdWqElDU1kqicsClhKgIoA
+RUN wget https://tjc-download.weiyun.com/ftn_handler/51fb793fb796dd680dd1d72d5796a0dc6dd8a7c14bfc523e6bd11d9c628f3fdc32e88304219d1a80cf4f931e8868edc30f2c0e835d34bc52203f7c1131c7f656/instantclient.tar?fname=instantclient.tar&from=30113&version=3.3.3.3
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.rpm
 #RUN wget https://download.oracle.com/otn/linux/instantclient/11204/oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.rpm
@@ -17,9 +17,9 @@ RUN wget https://pan.baidu.com/s/1SdWqElDU1kqicsClhKgIoA
 #RUN dpkg -i oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.deb
-RUN 7za x instantclient.zip && \
+RUN tar zxf instantclient.tar && \
     mv /tmp/instantclient_11_2 /opt/instantclient
-RUN rm -f /tmp/instantclient*.zip
+RUN rm -f /tmp/instantclient*.tar
 RUN mkdir -p /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
 ADD tnsnames.ora /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
 ENV ORACLE_HOME=/opt/instantclient/instantclient_11_2 \
