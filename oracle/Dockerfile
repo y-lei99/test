@@ -4,7 +4,7 @@ USER root
 
 RUN apt-get update
 RUN apt-get install -y libaio1
-#RUN apt-get install -y p7zip-full
+RUN apt-get install unzip
 
 WORKDIR /tmp
 RUN wget https://download.oracle.com/otn/linux/instantclient/11204/instantclient-basic-linux.x64-11.2.0.4.0.zip
