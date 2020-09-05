@@ -15,7 +15,7 @@ RUN wget https://download.oracle.com/otn/linux/instantclient/11204/instantclient
 #RUN dpkg -i oracle-instantclient11.2-basic-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-sqlplus-11.2.0.4.0-1.x86_64.deb
 #RUN dpkg -i oracle-instantclient11.2-devel-11.2.0.4.0-1.x86_64.deb
-RUN unzip instantclient-basic-linux.x64-11.2.0.4.0.zip && \
+RUN unzip instantclient-basic-linux.x64-11.2.0.4.0 && \
     mv instantclient_11_2 /opt/instantclient
 RUN rm -f /tmp/oracle-instantclient*.zip
 RUN mkdir -p /opt/instantclient/instantclient_11_2/NETWORK/ADMIN
