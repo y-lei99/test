@@ -31,7 +31,7 @@ RUN conda install --quiet --yes \
         #python=3.7* \
         #pangeo-notebook=2020.08.31 \
         'pip' \
-        #awscli \
+        'awscli' \
         'bottleneck' \
         'boto3' \
         'cartopy' \
@@ -39,10 +39,12 @@ RUN conda install --quiet --yes \
         'ciso' \
         'dask-ml' \
         #datashader>=0.11 \
-        #descartes \
-        #eofs \
+        'nodejs' \
+        'gdal' \
+        'descartes' \
+        'eofs' \
         'esmpy' \
-        #'fastjmd95' \
+        'fastjmd95' \
         'fsspec' \
         'gcsfs' \
         'geopandas' \
@@ -50,12 +52,12 @@ RUN conda install --quiet --yes \
         'gsw' \
         'h5netcdf' \
         'h5py' \
-        #holoviews \
-        #hvplot \
-        #intake \
-        #intake-esm \
-        #intake-geopandas \
-        #intake-stac \
+        'holoviews' \
+        'hvplot' \
+        'intake' \
+        'intake-esm' \
+        'intake-geopandas' \
+        'intake-stac' \
         'intake-xarray' \
         'ipyleaflet' \
         'ipywidgets' \
@@ -67,24 +69,24 @@ RUN conda install --quiet --yes \
         'nbstripout' \
         'nc-time-axis' \
         'netcdf4' \
-        #nomkl \
-        #numcodecs \
+        'nomkl' \
+        'numcodecs' \
         'numpy' \
         'pandas' \
-        #panel \
+        'panel' \
         'prefect' \
         'pyarrow' \
         'pydap' \
         'pystac' \
-        #python-blosc \
-        #python-gist \
+        'python-blosc' \
+        'python-gist' \
         'rasterio' \
         'rio-cogeo' \
         'rioxarray' \
         's3fs' \
         'sat-search' \
-        #sat-stac \
-        #satpy \
+        'sat-stac' \
+        'satpy' \
         'scikit-image' \
         'scikit-learn' \
         'scipy' \
@@ -92,16 +94,21 @@ RUN conda install --quiet --yes \
         'tiledb-py' \
         'xarray' \
         'xarray-spatial' \
-        #xcape \
-        #xesmf \
-        #xgcm \
-        #xhistogram \
-        #xlayers \
-        #3xmitgcm \
-        #xpublish \
-        #xrft \
+        'xcape' \
+        'xesmf' \
+        'xgcm' \
+        'xhistogram' \
+        'xlayers' \
+        '3xmitgcm' \
+        'xpublish' \
+        'xrft' \
         'zarr' \
-        && conda clean -yaf 
+        && conda clean -yaf \
+        && jupyter nbextension enable --py widgetsnbextension --sys-prefix \
+        && jupyter serverextension enable --py jupyterlab --sys-prefix \
+        && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-leaflet \
+        && jupyter nbextension enable --py --sys-prefix ipyleaflet 
+        
         #&& find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
         #&& find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete \
         #&& find ${CONDA_DIR} -follow -type f -name '*.js.map' -delete \
