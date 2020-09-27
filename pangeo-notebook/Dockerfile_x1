@@ -104,10 +104,10 @@ RUN conda install --quiet --yes \
         'xrft' \
         'zarr' \
         && conda clean -yaf \
-        && jupyter nbextension enable --py widgetsnbextension --sys-prefix \
-        && jupyter serverextension enable --py jupyterlab --sys-prefix \
-        && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-leaflet \
-        && jupyter nbextension enable --py --sys-prefix ipyleaflet 
+        && jupyter nbextension enable --py widgetsnbextension --sys-prefix 
+RUN jupyter serverextension enable --py jupyterlab --sys-prefix \
+    && jupyter labextension install @jupyter-widgets/jupyterlab-manager jupyter-leaflet \
+    && jupyter nbextension enable --py --sys-prefix ipyleaflet 
         
         #&& find ${CONDA_DIR} -follow -type f -name '*.a' -delete \
         #&& find ${CONDA_DIR} -follow -type f -name '*.pyc' -delete \
