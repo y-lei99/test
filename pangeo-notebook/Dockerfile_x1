@@ -31,7 +31,7 @@ RUN conda install --quiet --yes \
         #python=3.7* \
         #pangeo-notebook=2020.08.31 \
         'pip' \
-        'awscli' \   #
+        'awscli' \   
         'bottleneck' \
         'boto3' \
         'cartopy' \
@@ -39,10 +39,10 @@ RUN conda install --quiet --yes \
         'ciso' \
         'dask-ml' \
         #datashader>=0.11 \
-        'descartes' \    #
-        'eofs' \    #
+        'descartes' \    
+        'eofs' \    
         'esmpy' \
-        'fastjmd95' \   #
+        'fastjmd95' \   
         'fsspec' \
         'gcsfs' \
         'geopandas' \
@@ -50,12 +50,12 @@ RUN conda install --quiet --yes \
         'gsw' \
         'h5netcdf' \
         'h5py' \
-        'holoviews' \   #
-        'hvplot' \     #
-        'intake' \    #
-        'intake-esm' \   #
-        'intake-geopandas' \   #
-        'intake-stac' \    #
+        'holoviews' \   
+        'hvplot' \     
+        'intake' \    
+        'intake-esm' \   
+        'intake-geopandas' \   
+        'intake-stac' \    
         'intake-xarray' \
         'ipyleaflet' \
         'ipywidgets' \
@@ -67,17 +67,17 @@ RUN conda install --quiet --yes \
         'nbstripout' \
         'nc-time-axis' \
         'netcdf4' \
-        'nomkl' \     #
-        'numcodecs' \  #
+        'nomkl' \     
+        'numcodecs' \  
         'numpy' \
         'pandas' \
-        'panel' \   #
+        'panel' \   
         'prefect' \
         'pyarrow' \
         'pydap' \
         'pystac' \
-        'python-blosc' \  #
-        'python-gist' \   #
+        'python-blosc' \  
+        'python-gist' \   
         'rasterio' \
         'rio-cogeo' \
         'rioxarray' \
